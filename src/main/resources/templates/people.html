@@ -1,0 +1,58 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>People</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" type="text/css" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css" />
+</head>
+<body>
+<h1>People</h1>
+
+<div class="container">
+    <ul class="pagination" th:with="total = ${people.totalPages}">
+        <li th:if="${people.hasPrevious()}">
+            <a th:href="@{/people(page=${people.previousPageable().pageNumber},size=${people.size})}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li th:each="page : ${#numbers.sequence(0, total - 1)}"><a th:href="@{/people(page=${page},size=${people.size})}" th:text="${page + 1}">1</a></li>
+        <li th:if="${people.hasNext()}">
+            <a th:href="@{/people(page=${people.nextPageable().pageNumber},size=${people.size})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</div>
+        <table class="table">
+            <thead>
+            <tr><th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Claims</th></tr>
+            </thead>
+            <tr th:each="person, it : ${people}" th:with="index = ${it.count}">
+                <td th:text="${person.id}"></td>
+                <td th:text="${person.name}"></td>
+                <td th:text="${person.phone}"></td>
+                <td th:text="${person.email}"></td>
+                <td >
+                    <button data-toggle="collapse" th:attr="data-target='#p'+${person.id}">Show claims...</button>
+                    <div th:id="${'p' + person.id}" class="collapse">
+                        <table class="table-bordered">
+                            <thead>
+                            <tr><th>#</th><th>Description</th><th>Amount</th></tr>
+                            </thead>
+                            <tr th:each="claim, it : ${person.claims}">
+                                <td th:text="${claim.number}"></td>
+                                <td th:text="${claim.description}"></td>
+                                <td th:text="${claim.amount}"></td>
+                            </tr>
+                            <tr><th colspan="2">Total</th><th th:text="${person.totalClaimed}"></th></tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+</body>
+</html>
